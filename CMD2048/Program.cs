@@ -13,7 +13,7 @@ namespace CMD2048
 
         static void Main(string[] args)
         {
-            Game.Init(8,8);
+            Game.Init(3,3);
         }
     }
 }

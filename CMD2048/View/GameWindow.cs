@@ -100,7 +100,7 @@ namespace CMD2048.View
                 var lineContent = "\t";
                 for(var x = 0; x < _x; x++)
                 {
-                    lineContent +="|"+ image[y, x] + "|\t";
+                    lineContent +="|"+ image[x, y] + "|\t";
                 }
                 var rowY = (y + 1)*3;
                 imagePosition[rowY] = lineContent;

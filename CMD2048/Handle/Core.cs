@@ -1,4 +1,5 @@
 ﻿using CMD2048.Handle.Model;
+using CMD2048.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,30 +11,24 @@ namespace CMD2048.Handle
     public class Core
     {
         public List<Cell> _cells = new List<Cell>();
-
+        private readonly GameWindow _window;
         private readonly int _x;
         private readonly int _y;
+        private readonly Stack<List<int>> _histeryCellsValue = new Stack<List<int>>();
+        private Event _eventCenter;
 
-        public Core(int x, int y)
+        public Core(int x, int y, GameWindow window)
         {
             _x = x;
             _y = y;
-            GetCellList();
-            SetRandom(2);
+            _window = window;
+            _eventCenter = new Event();
+            Init();
         }
 
-        public Action GetHandleByDirection(Direction direction)
+        public void Listening()
         {
-            var cellListGroup = GetCellsListGroup(direction);
-            var iterator = GetIterator(cellListGroup, direction);
-            var diretionAction = new DiretionAction(cellListGroup, iterator);
-            return () =>
-            {
-                if (diretionAction.Run())
-                {
-                    SetRandom();
-                }
-            };
+            _eventCenter.Listening();
         }
 
         public void SetRandom(int count = 1)
@@ -58,9 +53,60 @@ namespace CMD2048.Handle
             return image;
         }
 
-        private void GetCellList()
+        public int[,] GetLastImage()
         {
-            for(var y = 0; y < _y; y++)
+            var lastCellListValue = _histeryCellsValue.Pop();
+            for(var i = 0; i < _cells.Count; i++)
+            {
+                _cells[i].Value = lastCellListValue[i];
+            }
+            return GetImage();
+        }
+
+        private void Init()
+        {
+            InitCellList();
+            SetRandom(2);
+            _window.Refurbish(GetImage());
+            var actionDict = new Dictionary<Direction, Action>();
+            actionDict.Add(Direction.Up, GetHandleByDirection(Direction.Up));
+            actionDict.Add(Direction.Down, GetHandleByDirection(Direction.Down));
+            actionDict.Add(Direction.Left, GetHandleByDirection(Direction.Left));
+            actionDict.Add(Direction.Right, GetHandleByDirection(Direction.Right));
+            _eventCenter.RegisterHandle(actionDict,
+                () => { Init(); },
+                () => {
+                    var lastImage = GetLastImage();
+                    _window.Refurbish(lastImage);
+                });
+        }
+
+        private void BackCellListValue()
+        {
+            var valueList = _cells.Select(o => o.Value).ToList();
+            _histeryCellsValue.Push(valueList);
+        }
+
+        private Action GetHandleByDirection(Direction direction)
+        {
+            var cellListGroup = GetCellsListGroup(direction);
+            var iterator = GetIterator(cellListGroup, direction);
+            var diretionAction = new DiretionAction(cellListGroup, iterator);
+            return () =>
+            {
+                BackCellListValue();
+                if (diretionAction.Run())
+                {
+                    SetRandom();
+                }
+                _window.Refurbish(GetImage());
+            };
+        }
+
+        private void InitCellList()
+        {
+            _cells.Clear();
+            for (var y = 0; y < _y; y++)
             {
                 for (var x= 0; x < _x; x++)
                 {
@@ -91,13 +137,13 @@ namespace CMD2048.Handle
                 Reverse = iteratorOrderAsc
             };
             iteratorOrderAsc.Reverse = iteratorOrderDesc;
-            if (direction == Direction.Up || direction == Direction.Right)
+            if (direction == Direction.Up || direction == Direction.Left)
             {
-                return iteratorOrderDesc;
+                return iteratorOrderAsc;
             }
             else
             {
-                return iteratorOrderAsc;
+                return iteratorOrderDesc;
             }
         }
 

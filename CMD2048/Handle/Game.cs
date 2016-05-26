@@ -11,11 +11,9 @@ namespace CMD2048.Handle
     {
         public static void Init(int x, int y)
         {
-            var gameWindwo = InitWindow(x, y);
-            var core = new Core(x, y);
-            var image = core.GetImage();
-            gameWindwo.Refurbish(image);
-            Console.Read();
+            var gameWindow = InitWindow(x, y);
+            var core = new Core(x, y, gameWindow);
+            core.Listening();
         }
 
         public static GameWindow InitWindow(int x,int y)
