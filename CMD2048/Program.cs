@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CMD2048.Handle;
+using CMD2048.View;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +10,10 @@ namespace CMD2048
 {
     class Program
     {
-        static int[] intArr = new int[10];
 
         static void Main(string[] args)
         {
-
+            Game.Init(8,8);
         }
     }
 }
