@@ -15,9 +15,15 @@ namespace CMD2048.View
         private readonly int _windowHeight;
         private readonly Dictionary<int, CellStyle> _cellStyles = new Dictionary<int, CellStyle>();
 
+        private const string _defaultTitle = "2048Game";
+        private const string _instraction = "w:Up s:Down a:Left d:Right";
+
         public int ColWidth { get; private set; }
         public int RowHeight { get; private set; }
         public int TitleHeight { get; private set; }
+        public int InstractionHeight { get; private set; }
+
+        public string StatusMsg { get; set; }
 
         public GameWindow(int x, int y)
         {
@@ -66,11 +72,13 @@ namespace CMD2048.View
         /// <returns></returns>
         public GameWindow DrawTitle(string title = null)
         {
-            var defaultTitle = "2048Game";
-            Console.Title = defaultTitle;
+            Console.Title = _defaultTitle;
             var totalHeight = 5;
             var titleImage = new string[totalHeight];
-            titleImage[2] = string.IsNullOrEmpty(title) ? defaultTitle : title;
+            var titleContent = (string.IsNullOrEmpty(title) ? _defaultTitle : title)
+                .Select(o => " " + o)
+                .Aggregate((a, n) => a + n);
+            titleImage[2] = titleContent;
             for (var i = 0;i< titleImage.Length; i++)
             {
                 var lineStr = GetBoxLineStr(totalHeight, i, titleImage[i]);
@@ -79,10 +87,23 @@ namespace CMD2048.View
             return this;
         }
 
-        public GameWindow DrawInstraction(string instraction = null)
+        public GameWindow DrawInstraction()
         {
-
-
+            var instractionHeight = 3;
+            var instractionImage = new string[instractionHeight];
+            if (!string.IsNullOrEmpty(StatusMsg))
+            {
+                instractionHeight = 4;
+                instractionImage = new string[instractionHeight];
+                instractionImage[2] = StatusMsg;
+            }
+            instractionImage[1] = _instraction;
+            for (var i = 0; i < instractionImage.Length; i++)
+            {
+                var lineStr = GetBoxLineStr(instractionHeight, i, instractionImage[i]);
+                Console.WriteLine(lineStr);
+            }
+            InstractionHeight = instractionHeight + 1;
             return this;
         }
 
@@ -93,7 +114,7 @@ namespace CMD2048.View
         /// <returns></returns>
         public GameWindow DrawMain(int[,] image)
         {
-            var mainHeight = _windowHeight - TitleHeight - 4;
+            var mainHeight = _windowHeight - TitleHeight - InstractionHeight;
             var imagePosition = new string[mainHeight];
             for(var y = 0; y < _y; y++)
             {
@@ -151,11 +172,12 @@ namespace CMD2048.View
             }
         }
 
-        public void Refurbish(int[,] image, string title = null, string instraction = null)
+        public void Refurbish(int[,] image, string title = null)
         {
+            if (image == null) return;
             Console.Clear();
-            DrawTitle(title);
-            DrawInstraction(instraction);
+            DrawTitle();
+            DrawInstraction();
             DrawMain(image);
         }
 
@@ -182,7 +204,7 @@ namespace CMD2048.View
         /// <returns></returns>
         public int GetWindowHeight()
         {
-            return _y * RowHeight + RowHeight + 5 + TitleHeight;
+            return _y * RowHeight + RowHeight + 6 + TitleHeight;
         }
 
         /// <summary>
@@ -222,10 +244,8 @@ namespace CMD2048.View
                 {                
                     if (!string.IsNullOrEmpty(lineContent))
                     {
-                        contentLength = lineContent.Length * 2;
-                        contentStr = lineContent
-                        .Select(o => " " + o)
-                        .Aggregate((a, n) => a + n);
+                        contentLength = lineContent.Length;
+                        contentStr = lineContent;                      
                     }
                     spaceLength = ((_windowWidth - contentLength) - 4) / 2;
                 }

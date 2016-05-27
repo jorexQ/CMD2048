@@ -55,6 +55,7 @@ namespace CMD2048.Handle
 
         public int[,] GetLastImage()
         {
+            if (_histeryCellsValue.Count == 0) return null;
             var lastCellListValue = _histeryCellsValue.Pop();
             for(var i = 0; i < _cells.Count; i++)
             {
@@ -65,8 +66,10 @@ namespace CMD2048.Handle
 
         private void Init()
         {
+            _histeryCellsValue.Clear();
             InitCellList();
             SetRandom(2);
+            _window.StatusMsg = "Game Starting...";
             _window.Refurbish(GetImage());
             var actionDict = new Dictionary<Direction, Action>();
             actionDict.Add(Direction.Up, GetHandleByDirection(Direction.Up));
@@ -77,6 +80,7 @@ namespace CMD2048.Handle
                 () => { Init(); },
                 () => {
                     var lastImage = GetLastImage();
+                    _window.StatusMsg = "Game Starting...";
                     _window.Refurbish(lastImage);
                 });
         }
@@ -84,7 +88,23 @@ namespace CMD2048.Handle
         private void BackCellListValue()
         {
             var valueList = _cells.Select(o => o.Value).ToList();
-            _histeryCellsValue.Push(valueList);
+            if (_histeryCellsValue.Count == 0)
+            {
+                _histeryCellsValue.Push(valueList);
+            }
+            else
+            {
+                var lastCellValues = _histeryCellsValue.Peek();
+                var isSame = true;
+                for(var i = 0; i < lastCellValues.Count; i++)
+                {
+                    isSame &= lastCellValues[i] == valueList[i];
+                }
+                if (!isSame)
+                {
+                    _histeryCellsValue.Push(valueList);
+                }
+            }                 
         }
 
         private Action GetHandleByDirection(Direction direction)
@@ -100,7 +120,35 @@ namespace CMD2048.Handle
                     SetRandom();
                 }
                 _window.Refurbish(GetImage());
+                if (IsGameOver())
+                {
+                    _window.StatusMsg = "Game Over (press Q restart) ";
+                    _window.Refurbish(GetImage());
+                }
             };
+        }
+
+        private bool IsGameOver()
+        {
+            var hasEmptyValue = false;
+            var hasNearSameValue = false;
+            for(var i = 0; i < _cells.Count; i++)
+            {
+                var item = _cells[i];
+                hasEmptyValue |= item.Value == 0;
+
+                if (item.IndexX != _x - 1)
+                {
+                    var nearRightIndex = i + 1;
+                    hasNearSameValue |= item.Value == _cells[nearRightIndex].Value;
+                }
+                if (item.IndexY != 0)
+                {
+                    var nearUpIndex = i - _y;
+                    hasNearSameValue |= item.Value == _cells[nearUpIndex].Value;
+                }
+            }
+            return !(hasEmptyValue || hasNearSameValue);
         }
 
         private void InitCellList()
