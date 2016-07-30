@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace CMD2048.Handle.Model
 {
+    /// <summary>
+    /// 移动方向
+    /// </summary>
     public enum Direction
     {
         Up = 0,

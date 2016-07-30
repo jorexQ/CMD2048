@@ -7,8 +7,16 @@ using System.Threading.Tasks;
 
 namespace CMD2048.Handle
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class Game
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public static void Init(int x, int y)
         {
             var gameWindow = InitWindow(x, y);
@@ -16,6 +24,12 @@ namespace CMD2048.Handle
             core.Listening();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public static GameWindow InitWindow(int x,int y)
         {
             return new GameWindow(x, y)

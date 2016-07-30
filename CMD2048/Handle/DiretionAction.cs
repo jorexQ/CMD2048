@@ -7,11 +7,23 @@ using System.Threading.Tasks;
 
 namespace CMD2048.Handle
 {
+    /// <summary>
+    /// 移动方向处理委托类
+    /// </summary>
     public class DiretionAction
     {
+        /// <summary>
+        /// 所属迭代器
+        /// </summary>
         private readonly Iterator _iterator;
+        /// <summary>
+        /// 迭代顺序组
+        /// </summary>
         private List<List<Cell>> _cellsListGroup;
 
+        /// <summary>
+        /// 开始点
+        /// </summary>
         private int _startIndex
         {
             get
@@ -20,12 +32,21 @@ namespace CMD2048.Handle
             }
         }
 
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="cellsListGroup"></param>
+        /// <param name="iterator"></param>
         public DiretionAction(List<List<Cell>> cellsListGroup, Iterator iterator)
         {
             _iterator = iterator;
             _cellsListGroup = cellsListGroup;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public bool Run()
         {
             var isLayoutChange = false;
@@ -36,6 +57,11 @@ namespace CMD2048.Handle
             return isLayoutChange;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cellList"></param>
+        /// <returns></returns>
         private bool RunItemList(List<Cell> cellList)
         {
             var isLayoutChange = false;
@@ -53,6 +79,12 @@ namespace CMD2048.Handle
             return isLayoutChange;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cellList"></param>
+        /// <param name="currentIndex"></param>
+        /// <returns></returns>
         private bool Align(List<Cell> cellList, int currentIndex)
         {
             var isLayoutChange = false;
@@ -68,6 +100,12 @@ namespace CMD2048.Handle
             return isLayoutChange;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cellList"></param>
+        /// <param name="currentIndex"></param>
+        /// <returns></returns>
         private bool Merge(List<Cell> cellList, int currentIndex)
         {
             if (currentIndex == _startIndex) return false;
@@ -85,6 +123,13 @@ namespace CMD2048.Handle
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cellList"></param>
+        /// <param name="currentIndex"></param>
+        /// <param name="hasValueIndex"></param>
+        /// <returns></returns>
         private bool TryGetHasValeCellIndex(
             List<Cell> cellList,
             int currentIndex,
@@ -108,6 +153,12 @@ namespace CMD2048.Handle
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cellList"></param>
+        /// <param name="indexA"></param>
+        /// <param name="indexB"></param>
         private void SwapValue(List<Cell> cellList, int indexA, int indexB)
         {
             var indexAItem = cellList[indexA];
@@ -117,16 +168,32 @@ namespace CMD2048.Handle
             indexBItem.Value = temp;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currentIndex"></param>
+        /// <param name="lenght"></param>
+        /// <returns></returns>
         private bool Condition(int currentIndex, int lenght)
         {
             return _iterator.Condition(currentIndex, lenght);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currentIndex"></param>
+        /// <returns></returns>
         private int GetNext(int currentIndex)
         {
             return _iterator.GetNext(currentIndex);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currentIndex"></param>
+        /// <returns></returns>
         private int GetPrevious(int currentIndex)
         {
             return _iterator.GetPrevious(currentIndex);

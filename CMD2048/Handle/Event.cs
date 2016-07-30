@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace CMD2048.Handle
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Event
     {
         private Dictionary<Direction, Action> _directionHandler
@@ -15,6 +18,12 @@ namespace CMD2048.Handle
         private Action _reStartHandle;
         private Action _rollBackHandle;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="directionHandler"></param>
+        /// <param name="reStartHandle"></param>
+        /// <param name="rollBackHandle"></param>
         public void RegisterHandle(Dictionary<Direction, Action> directionHandler,
             Action reStartHandle,
             Action rollBackHandle)
@@ -24,6 +33,9 @@ namespace CMD2048.Handle
             _rollBackHandle = rollBackHandle;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Listening()
         {
             switch (Console.ReadKey().Key)

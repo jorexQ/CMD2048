@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace CMD2048.View
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class GameWindow
     {
         private readonly int _x;

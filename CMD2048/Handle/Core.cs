@@ -8,15 +8,42 @@ using System.Threading.Tasks;
 
 namespace CMD2048.Handle
 {
+    /// <summary>
+    /// 2048逻辑核心
+    /// </summary>
     public class Core
     {
+        /// <summary>
+        /// 网格单元集合
+        /// </summary>
         public List<Cell> _cells = new List<Cell>();
+        /// <summary>
+        /// 游戏界面
+        /// </summary>
         private readonly GameWindow _window;
+        /// <summary>
+        /// 网格x轴个数
+        /// </summary>
         private readonly int _x;
+        /// <summary>
+        /// 网格y轴个数
+        /// </summary>
         private readonly int _y;
+        /// <summary>
+        /// 游戏动作记录，记录当前游戏状态图
+        /// </summary>
         private readonly Stack<List<int>> _histeryCellsValue = new Stack<List<int>>();
+        /// <summary>
+        /// 游戏事件中心
+        /// </summary>
         private Event _eventCenter;
 
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="window"></param>
         public Core(int x, int y, GameWindow window)
         {
             _x = x;
@@ -26,11 +53,18 @@ namespace CMD2048.Handle
             Init();
         }
 
+        /// <summary>
+        /// 事件监听开始
+        /// </summary>
         public void Listening()
         {
             _eventCenter.Listening();
         }
 
+        /// <summary>
+        /// 随机点生成器
+        /// </summary>
+        /// <param name="count">生成几个（默认一个）</param>
         public void SetRandom(int count = 1)
         {           
             var random = new Random();
@@ -43,6 +77,10 @@ namespace CMD2048.Handle
             }
         }
 
+        /// <summary>
+        /// 获取当前游戏状态图
+        /// </summary>
+        /// <returns></returns>
         public int[,] GetImage()
         {
             var image = new int[_x, _y];
@@ -53,6 +91,10 @@ namespace CMD2048.Handle
             return image;
         }
 
+        /// <summary>
+        /// 获取游戏记录的最后一张状态图
+        /// </summary>
+        /// <returns></returns>
         public int[,] GetLastImage()
         {
             if (_histeryCellsValue.Count == 0) return null;
@@ -64,6 +106,9 @@ namespace CMD2048.Handle
             return GetImage();
         }
 
+        /// <summary>
+        /// 初始化游戏
+        /// </summary>
         private void Init()
         {
             _histeryCellsValue.Clear();
@@ -85,6 +130,9 @@ namespace CMD2048.Handle
                 });
         }
 
+        /// <summary>
+        /// 回退上一个游戏状态图
+        /// </summary>
         private void BackCellListValue()
         {
             var valueList = _cells.Select(o => o.Value).ToList();
@@ -107,6 +155,11 @@ namespace CMD2048.Handle
             }                 
         }
 
+        /// <summary>
+        /// 游戏移动的处理委托工厂
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <returns></returns>
         private Action GetHandleByDirection(Direction direction)
         {
             var cellListGroup = GetCellsListGroup(direction);
@@ -128,6 +181,10 @@ namespace CMD2048.Handle
             };
         }
 
+        /// <summary>
+        /// 游戏是否结束
+        /// </summary>
+        /// <returns></returns>
         private bool IsGameOver()
         {
             var hasEmptyValue = false;
@@ -151,6 +208,9 @@ namespace CMD2048.Handle
             return !(hasEmptyValue || hasNearSameValue);
         }
 
+        /// <summary>
+        /// 初始化网格单元格
+        /// </summary>
         private void InitCellList()
         {
             _cells.Clear();
@@ -167,6 +227,12 @@ namespace CMD2048.Handle
             }
         }
 
+        /// <summary>
+        /// 迭代器生成工厂
+        /// </summary>
+        /// <param name="cellListGroup"></param>
+        /// <param name="direction"></param>
+        /// <returns></returns>
         private Iterator GetIterator(List<List<Cell>> cellListGroup, Direction direction)
         {
             var iteratorOrderAsc = new Iterator
@@ -195,6 +261,11 @@ namespace CMD2048.Handle
             }
         }
 
+        /// <summary>
+        /// 根据移动方向，生成迭代器，迭代分组顺序
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <returns></returns>
         private List<List<Cell>> GetCellsListGroup(Direction direction)
         {
             switch (direction)

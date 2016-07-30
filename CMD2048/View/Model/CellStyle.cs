@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace CMD2048.View
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class CellStyle
     {
         public ConsoleColor FontColor { get; set; }
